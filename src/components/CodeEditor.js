@@ -32,7 +32,7 @@ export default function CodeEditor() {
 
   return (
     <>
-      <div className="h-[80vh] w-[70vh] bg-[#0d1418] rounded-lg mr-0 ml-auto overflow-hidden p-4">
+      <div className="h-[50vh] w-[70vh] mt-16 bg-[#0d1418] rounded-xl overflow-hidden p-4">
         <EditorNavbar />
         <Editor
           height="100%"
@@ -40,6 +40,7 @@ export default function CodeEditor() {
           options={editorOptions}
           theme="customTheme"
           onMount={handleEditorMount}
+          className="rounded-xl" 
         />
       </div>
     </>

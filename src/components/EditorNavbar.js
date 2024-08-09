@@ -13,7 +13,7 @@ function EditorNavbar() {
 
   return (
     <>
-      <div className="sticky z-10 w-20 text-white mb-4 bg-[#0d1418]">
+      <div className="sticky z-[1] w-20 text-white mb-4 bg-[#0d1418]">
         <div>
           <label for="Language" class="block text-sm font-medium text-white">
             Language
