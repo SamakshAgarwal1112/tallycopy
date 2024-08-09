@@ -1,4 +1,5 @@
 "use client";
+import { Box, FormControl, FormLabel, Select } from "@chakra-ui/react";
 import useEditorStore from "@/store/EditorStore";
 
 function EditorNavbar() {
@@ -7,32 +8,37 @@ function EditorNavbar() {
     setLanguage: state.setLanguage,
   }));
 
-  const handleLanguageChange = (value) => {
-    setLanguage(value);
+  const handleLanguageChange = (e) => {
+    setLanguage(e.target.value);
   };
 
   return (
-    <>
-      <div className="sticky z-[1] w-20 text-white mb-4 bg-[#0d1418]">
-        <div>
-          <label for="Language" class="block text-sm font-medium text-white">
-            Language
-          </label>
-
-          <select
-            name="Language"
-            id="Language"
-            value={language}
-            onChange={(e) => handleLanguageChange(e.target.value)}
-            class="mt-1.5 w-full rounded-lg border-gray-300 text-gray-700 sm:text-sm"
-          >
-            <option value="cpp">C++</option>
-            <option value="java">Java</option>
-            <option value="javascript">Javascript</option>
-          </select>
-        </div>
-      </div>
-    </>
+    <Box
+      position="sticky"
+      top={0}
+      zIndex="1"
+      width="10rem"
+      backgroundColor="#0D1418"
+      color="white"
+      padding={4}
+    >
+      <FormControl>
+        <FormLabel htmlFor="language">Language</FormLabel>
+        <Select
+          id="language"
+          value={language}
+          onChange={handleLanguageChange}
+          borderColor="gray.300"
+          backgroundColor="gray.700"
+          color="white"
+          _placeholder={{ color: "gray.500" }}
+        >
+          <option value="cpp">C++</option>
+          <option value="java">Java</option>
+          <option value="javascript">Javascript</option>
+        </Select>
+      </FormControl>
+    </Box>
   );
 }
 

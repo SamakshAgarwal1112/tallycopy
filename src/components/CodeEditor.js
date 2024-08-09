@@ -1,10 +1,15 @@
 "use client";
+import { Box } from "@chakra-ui/react";
 import Editor, { monaco } from "@monaco-editor/react";
 import { useCallback } from "react";
 import EditorNavbar from "./EditorNavbar";
 import useEditorStore from "@/store/EditorStore";
 
 export default function CodeEditor() {
+  const { language } = useEditorStore((state) => ({
+    language: state.language,
+  }));
+
   const editorOptions = {
     fontSize: 18,
     wordWrap: "on",
@@ -12,10 +17,6 @@ export default function CodeEditor() {
       enabled: false,
     },
   };
-
-  const { language } = useEditorStore((state) => ({
-    language: state.language,
-  }));
 
   const handleEditorMount = useCallback((editor, monacoInstance) => {
     monacoInstance.editor.defineTheme("customTheme", {
@@ -31,18 +32,24 @@ export default function CodeEditor() {
   }, []);
 
   return (
-    <>
-      <div className="h-[50vh] w-[70vh] mt-16 bg-[#0d1418] rounded-xl overflow-hidden p-4">
-        <EditorNavbar />
-        <Editor
-          height="100%"
-          language={language}
-          options={editorOptions}
-          theme="customTheme"
-          onMount={handleEditorMount}
-          className="rounded-xl" 
-        />
-      </div>
-    </>
+    <Box
+      height="50vh"
+      width="70vh"
+      mt={16}
+      bg="#0D1418"
+      borderRadius="xl"
+      overflow="hidden"
+      p={4}
+    >
+      <EditorNavbar />
+      <Editor
+        height="100%"
+        language={language}
+        options={editorOptions}
+        theme="customTheme"
+        onMount={handleEditorMount}
+        className="rounded-xl"
+      />
+    </Box>
   );
 }
