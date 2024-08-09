@@ -35,7 +35,6 @@ export default function CodeEditor() {
     <Box
       height="50vh"
       width="70vh"
-      mt={16}
       bg="#0D1418"
       borderRadius="xl"
       overflow="hidden"
