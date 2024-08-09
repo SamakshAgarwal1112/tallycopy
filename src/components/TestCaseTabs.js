@@ -6,56 +6,105 @@ import {
   TabPanels,
   Tab,
   TabPanel,
+  Text,
   TabIndicator,
   Box,
   IconButton,
   Flex,
-  Button,
+  Input,
 } from "@chakra-ui/react";
 import { PlusIcon, TrashIcon } from "@heroicons/react/outline";
 import React, { useState, useEffect } from "react";
+import getTestCasesOfQuestion from "@/api/getTestCasesOfQuestion";
+import { nanoid } from 'nanoid'
+import { useParams } from "next/navigation";
 
 function TestCaseTabs() {
-  const [tabs, setTabs] = useState([
-    { id: 1, label: "Tab 1", content: "Content for Tab 1" },
-  ]);
-  const [activeTab, setActiveTab] = useState(tabs[0]?.id || 1); // Default to 1 if tabs are empty
+  const [activeTab, setActiveTab] = useState(null);
+  const [testCases, setTestCases] = useState([]);
+
+  const { question_id } = useParams();
 
   useEffect(() => {
-    if (tabs.length === 0) return;
-    if (tabs.length === 1) {
-      setActiveTab(tabs[0].id);
+    const fetchTestCases = async () => {
+      try {
+        const fetchedTestCases = await getTestCasesOfQuestion(question_id);
+        setTestCases(fetchedTestCases);
+
+        // Set the first tab as active by default
+        if (fetchedTestCases.length > 0) {
+          setActiveTab(fetchedTestCases[0].id);
+        }
+      } catch (error) {
+        console.error("Error fetching test cases:", error);
+      }
+    };
+
+    if (question_id) {
+      fetchTestCases();
     }
-  }, [tabs]);
+  }, [question_id]);
+
+  const handleTabClick = (id) => {
+    setActiveTab(id);
+  };
 
   const addTab = () => {
+    const currentTestCase = testCases.find((tc) => tc.id === activeTab);
+
+    if (!currentTestCase) return; // No current test case, abort
+
+    const newId = nanoid();
     const newTab = {
-      id: tabs.length + 1,
-      label: `Tab ${tabs.length + 1}`,
-      content: `Content for Tab ${tabs.length + 1}`,
+      ...currentTestCase,
+      id: newId,
+      label: `Test Case ${testCases.length + 1}`,
     };
-    setTabs([...tabs, newTab]);
-    setActiveTab(newTab.id);
+
+    setTestCases([...testCases, newTab]);
+    setActiveTab(newId);
   };
 
   const deleteTab = (id) => {
-    if (tabs.length === 1) return; // Prevent deletion if only one tab is left
-    const filteredTabs = tabs
-      .filter((tab) => tab.id !== id)
-      .map((tab, index) => ({
-        ...tab,
-        id: index + 1, // Reset the id based on the new index
-        label: `Tab ${index + 1}`, // Update the label accordingly
-      }));
-    setTabs(filteredTabs);
+    if (testCases.length === 1) return; // Prevent deletion if only one tab is left
+
+    const filteredTabs = testCases.filter((tab) => tab.id !== id);
+    setTestCases(filteredTabs);
     if (activeTab === id && filteredTabs.length > 0) {
       setActiveTab(filteredTabs[0].id);
     }
   };
 
-  const handleTabClick = (id) => {
-    setActiveTab(id);
+  const handleInputChange = (e, key) => {
+    const updatedTestCases = testCases.map((tc) => {
+      if (tc.id === activeTab) {
+        return {
+          ...tc,
+          input: {
+            ...tc.input,
+            [key]: e.target.value,
+          },
+        };
+      }
+      return tc;
+    });
+    setTestCases(updatedTestCases);
   };
+
+  const handleOutputChange = (e) => {
+    const updatedTestCases = testCases.map((tc) => {
+      if (tc.id === activeTab) {
+        return {
+          ...tc,
+          expected_output: e.target.value,
+        };
+      }
+      return tc;
+    });
+    setTestCases(updatedTestCases);
+  };
+
+  const currentTestCase = testCases.find((tc) => tc.id === activeTab) || { input: {}, expected_output: '' };
 
   return (
     <Box
@@ -69,15 +118,15 @@ function TestCaseTabs() {
     >
       <Tabs
         variant="unstyled"
-        index={tabs.findIndex((tab) => tab.id === activeTab)}
+        index={testCases.findIndex((tc) => tc.id === activeTab)}
         isLazy
-        onChange={(index) => setActiveTab(tabs[index]?.id)}
+        onChange={(index) => setActiveTab(testCases[index]?.id)}
       >
         <Box overflowX="auto">
           <TabList>
             <Flex wrap="wrap" gap={2} p={1}>
-              {tabs.map((tab) => (
-                <Box key={tab.id} display="flex" alignItems="center">
+              {testCases.map((testCase, index) => (
+                <Box key={testCase.id} display="flex" alignItems="center">
                   <Tab
                     _selected={{ color: "blue.500", fontWeight: "bold" }}
                     _focus={{ outline: "none" }}
@@ -85,11 +134,11 @@ function TestCaseTabs() {
                     py={2}
                     borderRadius="md"
                     cursor="pointer"
-                    onClick={() => handleTabClick(tab.id)}
+                    onClick={() => handleTabClick(testCase.id)}
                   >
-                    {tab.label}
+                    {`Test Case ${index + 1}`}
                   </Tab>
-                  {tabs.length > 1 && (
+                  {testCases.length > 1 && (
                     <IconButton
                       aria-label="Delete tab"
                       icon={<TrashIcon className="w-4 h-4 text-red-600" />}
@@ -98,7 +147,7 @@ function TestCaseTabs() {
                       ml={2}
                       onClick={(e) => {
                         e.stopPropagation();
-                        deleteTab(tab.id);
+                        deleteTab(testCase.id);
                       }}
                     />
                   )}
@@ -117,19 +166,38 @@ function TestCaseTabs() {
             </Flex>
           </TabList>
         </Box>
-        <TabIndicator
+        {/* <TabIndicator
           mt="-1.5px"
           height="2px"
           bg="blue.500"
           borderRadius="1px"
-        />
+        /> */}
         <TabPanels>
-          {tabs.map((tab) => (
-            <TabPanel key={tab.id}>
-              <Box p={4}>
-                <h2 className="text-xl font-bold mb-2">{tab.label}</h2>
-                <p>{tab.content}</p>
-              </Box>
+          {testCases.map((testCase) => (
+            <TabPanel key={testCase.id}>
+              <Flex direction="column" gap="0.5rem">
+                <Flex direction="column" gap="0.5rem">
+                  <strong>Input:</strong>
+                  {Object.entries(testCase.input).map(([key, value]) => (
+                    <Box key={key} gap="0.5rem">
+                      <Text fontWeight="300">{key}:</Text>
+                      <Input
+                        value={value}
+                        onChange={(e) => handleInputChange(e, key)}
+                        type="text"
+                      />
+                    </Box>
+                  ))}
+                </Flex>
+                <Flex direction="column" gap="0.5rem">
+                  <strong>Output:</strong>
+                  <Input
+                    value={testCase.expected_output}
+                    onChange={handleOutputChange}
+                    type="text"
+                  />
+                </Flex>
+              </Flex>
             </TabPanel>
           ))}
         </TabPanels>
