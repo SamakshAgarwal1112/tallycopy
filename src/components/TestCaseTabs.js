@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Tabs,
@@ -9,8 +9,8 @@ import {
   TabIndicator,
   Box,
   IconButton,
-  Wrap,
-  WrapItem,
+  Flex,
+  Button,
 } from "@chakra-ui/react";
 import { PlusIcon, TrashIcon } from "@heroicons/react/outline";
 import React, { useState, useEffect } from "react";
@@ -19,7 +19,7 @@ function TestCaseTabs() {
   const [tabs, setTabs] = useState([
     { id: 1, label: "Tab 1", content: "Content for Tab 1" },
   ]);
-  const [activeTab, setActiveTab] = useState(tabs[0].id);
+  const [activeTab, setActiveTab] = useState(tabs[0]?.id || 1); // Default to 1 if tabs are empty
 
   useEffect(() => {
     if (tabs.length === 0) return;
@@ -65,7 +65,7 @@ function TestCaseTabs() {
       p={4}
       maxW="70vh"
       overflow="hidden"
-      h="40vh" // Set height as per your requirement
+      h="40vh"
     >
       <Tabs
         variant="unstyled"
@@ -73,54 +73,50 @@ function TestCaseTabs() {
         isLazy
         onChange={(index) => setActiveTab(tabs[index]?.id)}
       >
-        <TabList>
-          <Wrap
-            spacing={4}
-            shouldWrapChildren
-            overflow="hidden"
-            p={1}
-            maxW="100%" // Ensure the Wrap container does not exceed the Box width
-          >
-            {tabs.map((tab) => (
-              <WrapItem key={tab.id} display="flex" alignItems="center">
-                <Tab
-                  _selected={{ color: "blue.500", fontWeight: "bold" }}
-                  _focus={{ outline: "none" }}
-                  px={4}
-                  py={2}
-                  borderRadius="md"
-                  cursor="pointer"
-                  onClick={() => handleTabClick(tab.id)}
-                >
-                  {tab.label}
-                </Tab>
-                {tabs.length > 1 && (
-                  <IconButton
-                    aria-label="Delete tab"
-                    icon={<TrashIcon className="w-4 h-4 text-red-600" />}
-                    size="sm"
-                    variant="link"
-                    ml={2}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      deleteTab(tab.id);
-                    }}
-                  />
-                )}
-                {tab.id === tabs.length && (
-                  <IconButton
-                    aria-label="Add tab"
-                    icon={<PlusIcon className="w-5 h-5" />}
-                    size="sm"
-                    variant="link"
-                    ml={2}
-                    onClick={addTab}
-                  />
-                )}
-              </WrapItem>
-            ))}
-          </Wrap>
-        </TabList>
+        <Box overflowX="auto">
+          <TabList>
+            <Flex wrap="wrap" gap={2} p={1}>
+              {tabs.map((tab) => (
+                <Box key={tab.id} display="flex" alignItems="center">
+                  <Tab
+                    _selected={{ color: "blue.500", fontWeight: "bold" }}
+                    _focus={{ outline: "none" }}
+                    px={4}
+                    py={2}
+                    borderRadius="md"
+                    cursor="pointer"
+                    onClick={() => handleTabClick(tab.id)}
+                  >
+                    {tab.label}
+                  </Tab>
+                  {tabs.length > 1 && (
+                    <IconButton
+                      aria-label="Delete tab"
+                      icon={<TrashIcon className="w-4 h-4 text-red-600" />}
+                      size="sm"
+                      variant="link"
+                      ml={2}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        deleteTab(tab.id);
+                      }}
+                    />
+                  )}
+                </Box>
+              ))}
+              <Box display="flex" alignItems="center">
+                <IconButton
+                  aria-label="Add tab"
+                  icon={<PlusIcon className="w-5 h-5" />}
+                  size="sm"
+                  variant="link"
+                  ml={2}
+                  onClick={addTab}
+                />
+              </Box>
+            </Flex>
+          </TabList>
+        </Box>
         <TabIndicator
           mt="-1.5px"
           height="2px"
