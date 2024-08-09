@@ -1,6 +1,4 @@
 "use client";
-
-import { Select, Option } from "@material-tailwind/react";
 import useEditorStore from "@/store/EditorStore";
 
 function EditorNavbar() {
@@ -14,19 +12,27 @@ function EditorNavbar() {
   };
 
   return (
-    <div className="sticky z-10 w-4 text-white mb-4 bg-[#0d1418]">
-      <Select
-        variant="static"
-        color="teal"
-        value={language}
-        onChange={handleLanguageChange}
-        className="text-white no-underline"
-      >
-        <Option value="cpp">cpp</Option>
-        <Option value="java">java</Option>
-        <Option value="javascript">javascript</Option>
-      </Select>
-    </div>
+    <>
+      <div className="sticky z-10 w-20 text-white mb-4 bg-[#0d1418]">
+        <div>
+          <label for="Language" class="block text-sm font-medium text-white">
+            Language
+          </label>
+
+          <select
+            name="Language"
+            id="Language"
+            value={language}
+            onChange={(e) => handleLanguageChange(e.target.value)}
+            class="mt-1.5 w-full rounded-lg border-gray-300 text-gray-700 sm:text-sm"
+          >
+            <option value="cpp">C++</option>
+            <option value="java">Java</option>
+            <option value="javascript">Javascript</option>
+          </select>
+        </div>
+      </div>
+    </>
   );
 }
 
