@@ -1,12 +1,22 @@
+import { Box } from "@chakra-ui/react";
 import CodeEditor from "../../components/CodeEditor";
 import TestCaseTabs from "@/components/TestCaseTabs";
 
 function PlayGround() {
   return (
-    <div className="mr-0 ml-auto overflow-hidden w-[70vh] flex flex-col gap-5 px-2 ">
+    <Box
+      ml="auto"
+      mr={0}
+      overflow="hidden"
+      w="70vh"
+      display="flex"
+      flexDirection="column"
+      gap={5}
+      px={2}
+    >
       <CodeEditor />
       <TestCaseTabs />
-    </div>
+    </Box>
   );
 }
 

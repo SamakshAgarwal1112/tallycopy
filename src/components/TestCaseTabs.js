@@ -1,6 +1,19 @@
-"use client";
-import React, { useState, useEffect } from "react";
+"use client"
+
+import {
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel,
+  TabIndicator,
+  Box,
+  IconButton,
+  Wrap,
+  WrapItem,
+} from "@chakra-ui/react";
 import { PlusIcon, TrashIcon } from "@heroicons/react/outline";
+import React, { useState, useEffect } from "react";
 
 function TestCaseTabs() {
   const [tabs, setTabs] = useState([
@@ -45,52 +58,87 @@ function TestCaseTabs() {
   };
 
   return (
-    <div className="bg-[#0d1418] rounded-lg p-4 flex flex-col h-[25rem]">
-      <div className="flex flex-wrap items-center max-w-[70vh] bg-[#0d1418] rounded-lg overflow-hidden mb-2">
-        {tabs.map((tab) => (
-          <div key={tab.id} className="flex items-center">
-            <a
-              role="tab"
-              className={`tab ${
-                activeTab === tab.id ? "tab-active bg-gray-700 text-white" : "text-gray-400"
-              } w-[10rem] mr-4 truncate px-2 py-1 rounded-md cursor-pointer`}
-              onClick={() => handleTabClick(tab.id)}
-            >
-              {tab.label}
-              {tabs.length > 1 && (
-                <TrashIcon
-                  className="w-4 h-4 inline-block ml-2 text-red-600 cursor-pointer"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    deleteTab(tab.id);
-                  }}
-                />
-              )}
-            </a>
-            {tab.id === tabs.length && (
-              <button
-                className="btn btn-outline btn-accent ml-4 z-10"
-                onClick={addTab}
-              >
-                <PlusIcon className="w-5 h-5" />
-              </button>
-            )}
-          </div>
-        ))}
-      </div>
-
-      <div className="flex-grow overflow-auto">
-        {tabs.map((tab) => (
-          <div
-            key={tab.id}
-            className={activeTab === tab.id ? "block" : "hidden"}
+    <Box
+      backgroundColor="#0D1418"
+      color="white"
+      borderRadius="xl"
+      p={4}
+      maxW="70vh"
+      overflow="hidden"
+      h="40vh" // Set height as per your requirement
+    >
+      <Tabs
+        variant="unstyled"
+        index={tabs.findIndex((tab) => tab.id === activeTab)}
+        isLazy
+        onChange={(index) => setActiveTab(tabs[index]?.id)}
+      >
+        <TabList>
+          <Wrap
+            spacing={4}
+            shouldWrapChildren
+            overflow="hidden"
+            p={1}
+            maxW="100%" // Ensure the Wrap container does not exceed the Box width
           >
-            <h2 className="text-xl font-bold mb-2">{tab.label}</h2>
-            <p>{tab.content}</p>
-          </div>
-        ))}
-      </div>
-    </div>
+            {tabs.map((tab) => (
+              <WrapItem key={tab.id} display="flex" alignItems="center">
+                <Tab
+                  _selected={{ color: "blue.500", fontWeight: "bold" }}
+                  _focus={{ outline: "none" }}
+                  px={4}
+                  py={2}
+                  borderRadius="md"
+                  cursor="pointer"
+                  onClick={() => handleTabClick(tab.id)}
+                >
+                  {tab.label}
+                </Tab>
+                {tabs.length > 1 && (
+                  <IconButton
+                    aria-label="Delete tab"
+                    icon={<TrashIcon className="w-4 h-4 text-red-600" />}
+                    size="sm"
+                    variant="link"
+                    ml={2}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteTab(tab.id);
+                    }}
+                  />
+                )}
+                {tab.id === tabs.length && (
+                  <IconButton
+                    aria-label="Add tab"
+                    icon={<PlusIcon className="w-5 h-5" />}
+                    size="sm"
+                    variant="link"
+                    ml={2}
+                    onClick={addTab}
+                  />
+                )}
+              </WrapItem>
+            ))}
+          </Wrap>
+        </TabList>
+        <TabIndicator
+          mt="-1.5px"
+          height="2px"
+          bg="blue.500"
+          borderRadius="1px"
+        />
+        <TabPanels>
+          {tabs.map((tab) => (
+            <TabPanel key={tab.id}>
+              <Box p={4}>
+                <h2 className="text-xl font-bold mb-2">{tab.label}</h2>
+                <p>{tab.content}</p>
+              </Box>
+            </TabPanel>
+          ))}
+        </TabPanels>
+      </Tabs>
+    </Box>
   );
 }
 
