@@ -17,14 +17,21 @@ import {
 import { PlusIcon, TrashIcon } from "@heroicons/react/outline";
 import React, { useState, useEffect } from "react";
 import { nanoid } from "nanoid";
+import useQuestionStore from "@/store/QuestionStore";
 
 function TestCaseTabs({ testcases }) {
   const [activeTab, setActiveTab] = useState(null);
-  const [testCases, setTestCases] = useState([]);
+  // const [testCases, setTestCases] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const {testCases, setTestCases}=useQuestionStore((state)=>({
+    testCases:state.testCases,
+    setTestCases:state.setTestCases,
+  }));
+
   useEffect(() => {
-    setTestCases(testcases); // Initialize state on mount or prop change
+    const runtimeTestCases = testcases.slice(0,3);
+    setTestCases(runtimeTestCases); // Initialize state on mount or prop change
     if (testcases.length > 0) {
       setActiveTab(testcases[0].id); // Set the first test case as active
     }

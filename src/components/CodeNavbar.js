@@ -1,6 +1,16 @@
 "use client";
 
-import { Avatar, Flex, Text, Button, Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/react";
+import {
+  Avatar,
+  Flex,
+  Text,
+  Button,
+  useToast,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+} from "@chakra-ui/react";
 import { FaPlay } from "react-icons/fa";
 import { TbCloudUpload } from "react-icons/tb";
 import Link from "next/link";
@@ -10,12 +20,19 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 function CodeNavbar({ question_id, testcases }) {
-  const code = useQuestionStore((state) => state.code);
-  const userId = useAuthStore((state) => state.userId);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { removeAuth } = useAuthStore((state) => ({
-    removeAuth: state.removeAuth,
+  const { testCases, code } = useQuestionStore((state) => ({
+    testCases: state.testCases,
+    code: state.code,
   }));
+
+  const { removeAuth, userId } = useAuthStore((state) => ({
+    removeAuth: state.removeAuth,
+    userId: state.userId,
+  }));
+
+  const [isSubmittingCode, setIsSubmittingCode] = useState(false);
+  const [isRunningCode, setIsRunningCode] = useState(false);
+
   const router = useRouter();
 
   const handleLogout = () => {
@@ -23,14 +40,22 @@ function CodeNavbar({ question_id, testcases }) {
     router.push("/login");
   };
 
+  const toast = useToast();
+
   async function submitCodeForCompilation(
     code,
     testCase,
     expectedOutputs,
     question_id,
-    userId
+    userId,
+    actionType
   ) {
-    setIsSubmitting(true);
+    if (actionType === "submit") {
+      setIsSubmittingCode(true);
+    } else if (actionType === "run") {
+      setIsRunningCode(true);
+    }
+
     try {
       const response = await fetch("/api/getCompileResults", {
         method: "POST",
@@ -52,12 +77,20 @@ function CodeNavbar({ question_id, testcases }) {
 
       const result = await response.json();
       console.log(result);
-      // Handle the result here (e.g., show success/failure message)
     } catch (error) {
-      console.error("Error submitting code:", error);
-      // Handle the error here (e.g., show error message to user)
+      toast({
+        title: "Error submitting code",
+        status: "error",
+        duration: 3000,
+        variant: "subtle",
+        isClosable: true,
+      });
     } finally {
-      setIsSubmitting(false);
+      if (actionType === "submit") {
+        setIsSubmittingCode(false);
+      } else if (actionType === "run") {
+        setIsRunningCode(false);
+      }
     }
   }
 
@@ -75,7 +108,27 @@ function CodeNavbar({ question_id, testcases }) {
       testCase,
       expectedOutputs,
       question_id,
-      userId
+      userId,
+      "submit"
+    );
+  };
+
+  const handleRun = () => {
+    const testCase = testCases.map((testcase) => ({
+      N: parseInt(testcase.input),
+    }));
+
+    const expectedOutputs = testCases.map(
+      (testcase) => testcase.expected_output
+    );
+
+    submitCodeForCompilation(
+      code,
+      testCase,
+      expectedOutputs,
+      question_id,
+      userId,
+      "run"
     );
   };
 
@@ -100,16 +153,16 @@ function CodeNavbar({ question_id, testcases }) {
       <Flex gap="1rem">
         <Button
           leftIcon={<FaPlay />}
-          onClick={() => {
-            // Handle run code action
-          }}
+          onClick={handleRun}
+          isLoading={isRunningCode}
+          loadingText="Running"
         >
           Run
         </Button>
         <Button
           leftIcon={<TbCloudUpload />}
           onClick={handleSubmit}
-          isLoading={isSubmitting}
+          isLoading={isSubmittingCode}
           loadingText="Submitting"
         >
           Submit
