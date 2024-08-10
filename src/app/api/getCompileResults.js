@@ -81,7 +81,7 @@ async function runCodeWithLimits(
   }
 }
 
-async function getCompileResults(code, testCase, expectedOutputs, question_id) {
+async function getCompileResults(code, testCase, expectedOutputs, question_id, userId) {
 
   const tc = generateTestCasesString(testCase);
 
@@ -128,7 +128,7 @@ async function getCompileResults(code, testCase, expectedOutputs, question_id) {
     }
 
     // console.log("Execution completed.");
-    checkTestCases(results, question_id);
+    checkTestCases(results, question_id, userId);
   } catch (error) {
   } finally {
     if (fs.existsSync(cppFilePath)) fs.unlinkSync(cppFilePath);

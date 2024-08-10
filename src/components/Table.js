@@ -16,9 +16,9 @@ import {
   Flex,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
-import getSubmissions from "@/api/getSubmissions";
+import getSubmissions from "@/app/api/getSubmissions";
 import { QuestionStatusFilter } from "@/utils/QuestionStatusFilter";
-import getQuestions from "@/api/getQuestions";
+import getQuestions from "@/app/api/getQuestions";
 import useAuthStore from "@/store/AuthStore";
 
 export const PracticeTable = () => {

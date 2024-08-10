@@ -16,8 +16,9 @@ import TestCaseTabs from "@/components/TestCaseTabs";
 import CodeNavbar from "@/components/CodeNavbar";
 import useAuthStore from "@/store/AuthStore";
 import { useRouter } from "next/navigation";
-import getQuestions from "@/api/getQuestions";
-import getTestCasesOfQuestion from "@/api/getTestCasesOfQuestion";
+import getQuestions from "@/app/api/getQuestions";
+import getTestCasesOfQuestion from "@/app/api/getTestCasesOfQuestion";
+import useQuestionStore from "@/store/QuestionStore";
 
 export default function QuestionPage() {
   const { question_id } = useParams();
@@ -29,7 +30,7 @@ export default function QuestionPage() {
   const toast = useToast();
 
   const isAuth = useAuthStore((state) => state.isAuth);
-
+  const code = useQuestionStore((state) => state.code);
   const router = useRouter();
 
   useEffect(() => {
@@ -94,7 +95,7 @@ export default function QuestionPage() {
 
   return (
     <>
-      <CodeNavbar />
+      <CodeNavbar question_id={question_id} testcases={testcases} />
       <Flex>
         <Flex
           direction={"column"}

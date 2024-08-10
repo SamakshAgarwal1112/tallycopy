@@ -1,15 +1,23 @@
 "use client";
 import { Box } from "@chakra-ui/react";
 import Editor, { monaco } from "@monaco-editor/react";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import EditorNavbar from "./EditorNavbar";
 import useEditorStore from "@/store/EditorStore";
+import useQuestionStore from "@/store/QuestionStore";
 
 export default function CodeEditor() {
   const { language, boilerplate, setBoilerplate } = useEditorStore((state) => ({
     language: state.language,
     boilerplate: state.boilerplate,
     setBoilerplate: state.setBoilerplate,
+  }));
+
+  const [currentCode, setCurrentCode] = useState(boilerplate);
+
+  const { setCode, code } = useQuestionStore((state) => ({
+    setCode: state.setCode,
+    code: state.code,
   }));
 
   const boilerplates = [
@@ -37,9 +45,8 @@ int main() {
   // your code goes here
 }
 
-
-main();`
-    }
+main();`,
+    },
   ];
 
   useEffect(() => {
@@ -48,10 +55,16 @@ main();`
       val = val ? val.code : "";
 
       setBoilerplate(val);
+      setCurrentCode(val);
     }
     boilerplateSetter();
-    console.log(boilerplate);
   }, [language, setBoilerplate]);
+
+  function handleChange(value) {
+    setCurrentCode(value);
+    setCode(value);
+    console.log(code);
+  }
 
   const editorOptions = {
     fontSize: 18,
@@ -90,8 +103,8 @@ main();`
         options={editorOptions}
         theme="customTheme"
         onMount={handleEditorMount}
-        className="rounded-xl"
-        value={boilerplate}
+        value={currentCode}
+        onChange={handleChange}
       />
     </Box>
   );

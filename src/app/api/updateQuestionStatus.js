@@ -1,9 +1,7 @@
-import { supabase } from "../supabaseClient";
-import useAuthStore from "@/store/AuthStore";
+import { supabase } from "@/utils/supabase";
 
-async function updateQuestionStatus(question_id, status) {
-  const { userId } = useAuthStore((state) => state.user.id);
-
+async function updateQuestionStatus(question_id, status, userId) {
+ 
   const { data, error } = await supabase
     .from("Submissions")
     .update({ status })

@@ -21,7 +21,7 @@ import { supabase } from "../../utils/supabase";
 import { useRouter } from "next/navigation";
 import useAuthStore from "@/store/AuthStore";
 import Link from "next/link";
-import getUserName from "@/api/getUserName";
+import getUserName from "@/app/api/getUserName";
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);

@@ -1,6 +1,6 @@
 import updateQuestionStatus from "./updateQuestionStatus";
 
-function checkTestCases(results, question_id) {
+function checkTestCases(results, question_id, userId) {
   const testCaseNumbers = Object.keys(results).map(Number);
 
   const lastTestCaseNumber = testCaseNumbers[testCaseNumbers.length - 1];
@@ -17,6 +17,6 @@ function checkTestCases(results, question_id) {
     status = "Solved";
   }
 
-  updateQuestionStatus(question_id, status);}
+  updateQuestionStatus(question_id, status, userId)}
 
 export default checkTestCases;
