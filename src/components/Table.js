@@ -12,6 +12,8 @@ import {
     TableContainer,
     Text,
     Stack,
+    Spinner,
+    Flex,
   } from '@chakra-ui/react'
 import { useRouter } from 'next/navigation';
 
@@ -34,6 +36,15 @@ export const PracticeTable = () => {
 
         fetchQuestions();
     }, []);
+
+    if(questions.length === 0) {
+        return (
+            <Flex w='100vw' h='100vh' justify={'center'} align={'center'}>
+                <Text fontSize={'2xl'} as={'b'} pr={'1rem'}>Loading</Text>
+                <Spinner size="lg" thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" />
+            </Flex>
+        );
+    }
 
     return (
         <div className="overflow-x-auto">

@@ -120,7 +120,7 @@ function TestCaseTabs() {
       color="white"
       borderRadius="xl"
       p={4}
-      maxW="70vh"
+      w="70vh"
       overflow="hidden"
       h="40vh"
     >

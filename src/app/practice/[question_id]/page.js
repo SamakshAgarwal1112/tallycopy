@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/utils/supabase';
 import { useParams } from 'next/navigation';
-import { Flex, Badge, Text, Box, Stack } from '@chakra-ui/react';
+import { Flex, Badge, Text, Box, Stack, Spinner } from '@chakra-ui/react';
 import CodeEditor from '@/components/CodeEditor';
 import TestCaseTabs from '@/components/TestCaseTabs';
 
@@ -45,7 +45,12 @@ export default function QuestionPage() {
     }, [question_id]);
 
     if (!question || !testcases) {
-        return <div>Loading...</div>;
+        return (
+            <Flex w='100vw' h='100vh' justify={'center'} align={'center'}>
+                <Text fontSize={'2xl'} as={'b'} pr={'1rem'}>Loading</Text>
+                <Spinner size="lg" thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" />
+            </Flex>
+        );
     }
 
     return (
