@@ -1,14 +1,57 @@
 "use client";
 import { Box } from "@chakra-ui/react";
 import Editor, { monaco } from "@monaco-editor/react";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import EditorNavbar from "./EditorNavbar";
 import useEditorStore from "@/store/EditorStore";
 
 export default function CodeEditor() {
-  const { language } = useEditorStore((state) => ({
+  const { language, boilerplate, setBoilerplate } = useEditorStore((state) => ({
     language: state.language,
+    boilerplate: state.boilerplate,
+    setBoilerplate: state.setBoilerplate,
   }));
+
+  const boilerplates = [
+    {
+      lang: "cpp",
+      code: `#include <iostream>
+using namespace std;
+
+int main() {
+    // your code goes here
+    return 0;
+}`,
+    },
+    {
+      lang: "java",
+      code: `public class Main {
+    public static void main(String[] args) {
+        // your code goes here
+    }
+}`,
+    },
+    {
+      lang: "javascript",
+      code: `function main() {
+  // your code goes here
+}
+
+
+main();`
+    }
+  ];
+
+  useEffect(() => {
+    function boilerplateSetter() {
+      let val = boilerplates.find((b) => b.lang === language);
+      val = val ? val.code : "";
+
+      setBoilerplate(val);
+    }
+    boilerplateSetter();
+    console.log(boilerplate);
+  }, [language, setBoilerplate]);
 
   const editorOptions = {
     fontSize: 18,
@@ -48,6 +91,7 @@ export default function CodeEditor() {
         theme="customTheme"
         onMount={handleEditorMount}
         className="rounded-xl"
+        value={boilerplate}
       />
     </Box>
   );
