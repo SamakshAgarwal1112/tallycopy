@@ -14,16 +14,23 @@ import {
   InputGroup,
   InputRightElement,
   useToast,
+  Spinner,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { supabase } from "../../utils/supabase"
+import { supabase } from "../../utils/supabase";
 import { useRouter } from "next/navigation";
+import useAuthStore from "@/store/AuthStore";
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState({ email: "", password: "" });
   const toast = useToast();
   const router = useRouter();
+
+  const { addAuth } = useAuthStore((state) => ({
+    addAuth: state.addAuth,
+  }));
 
   function onChange(e) {
     const { name, value } = e.target;
@@ -39,6 +46,7 @@ function Login() {
   }
 
   async function handleLogin() {
+    setLoading(true);
     const { email, password } = userData;
     try {
       const { _, error } = await supabase.auth.signInWithPassword({
@@ -52,9 +60,13 @@ function Login() {
       toast({
         status: "success",
         title: "Login Successful",
+        variant: "subtle",
+        description: "Redirecting to practice page...",
         isClosable: true,
         duration: 2500,
       });
+      addAuth();
+
       setTimeout(() => {
         router.push("/practice");
       }, 1000);
@@ -66,6 +78,8 @@ function Login() {
         isClosable: true,
         duration: 2500,
       });
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -123,7 +137,7 @@ function Login() {
                 }}
                 onClick={handleSubmit}
               >
-                Login
+                {loading ? <Spinner/> : "Log in"}
               </Button>
             </Stack>
           </Stack>

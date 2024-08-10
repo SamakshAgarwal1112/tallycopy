@@ -13,18 +13,25 @@ import {
   Heading,
   Text,
   useToast,
+  Spinner,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { supabase } from "../../utils/supabase";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import useAuthStore from "@/store/AuthStore";
 
 function Signup() {
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState({});
   const toast = useToast();
   const router = useRouter();
+
+  const { addAuth } = useAuthStore((state) => ({
+    addAuth: state.addAuth,
+  }));
 
   function onChange(e) {
     const { name, value } = e.target;
@@ -39,6 +46,7 @@ function Signup() {
   }
 
   async function handleSignup() {
+    setLoading(true);
     const { email, userName, password } = userData;
 
     try {
@@ -59,7 +67,7 @@ function Signup() {
 
       const { err } = await supabase
         .from("Users")
-        .insert([{ "uid": uid, "user_handle": userName }]);
+        .insert([{ uid: uid, user_handle: userName }]);
 
       if (err) {
         throw err;
@@ -67,11 +75,14 @@ function Signup() {
 
       toast({
         status: "success",
-        title: "Welcome",
+        title: "Welcome back!",
+        variant: "subtle",
+        description: "redirecting to practice page...",
         isClosable: true,
         duration: 2500,
       });
 
+      addAuth();
       setTimeout(() => {
         router.push("/practice");
       }, 1000);
@@ -83,6 +94,8 @@ function Signup() {
         isClosable: true,
         duration: 2500,
       });
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -149,7 +162,7 @@ function Signup() {
                 isDisabled={!isComplete()}
                 onClick={handleSubmit}
               >
-                Sign up
+               {loading ? <Spinner/> : "Sign up"}
               </Button>
             </Stack>
             <Stack pt={6}>
