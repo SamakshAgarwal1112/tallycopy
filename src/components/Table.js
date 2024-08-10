@@ -21,9 +21,13 @@ import getSubmissions from "@/app/api/getSubmissions";
 import { QuestionStatusFilter } from "@/utils/QuestionStatusFilter";
 import getQuestions from "@/app/api/getQuestions";
 import useAuthStore from "@/store/AuthStore";
+import useStatusStore from "@/store/StatusStore";
 
 export const PracticeTable = () => {
   const [questions, setQuestions] = useState([]);
+  const { setStatus } = useStatusStore((state) => ({
+    setStatus: state.setStatus,
+  }));
   const [filteredQuestions, setFilteredQuestions] = useState([]);
   const router = useRouter();
   const [submissions, setSubmissions] = useState([]);
@@ -121,6 +125,7 @@ export const PracticeTable = () => {
                   key={question.id}
                   cursor={"pointer"}
                   onClick={() => {
+                    setStatus(question.status);
                     router.push(`/practice/${question.id}`);
                   }}
                 >
