@@ -29,7 +29,6 @@ function Navbar() {
         <Avatar
           marginRight="1rem"
           name="Dan Abrahmov"
-          src="https://bit.ly/dan-abramov"
         />
       ) : (
         <Flex gap="1rem" marginRight="1rem">
