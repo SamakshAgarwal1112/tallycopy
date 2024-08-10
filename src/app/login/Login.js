@@ -15,6 +15,7 @@ import {
   InputRightElement,
   useToast,
   Spinner,
+  Spinner,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { supabase } from "../../utils/supabase";
@@ -43,6 +44,10 @@ function Login() {
   function handleSubmit(e) {
     e.preventDefault();
     handleLogin();
+  }
+
+  function isComplete() {
+    return userData["email"] && userData["password"];
   }
 
   async function handleLogin() {
@@ -130,14 +135,13 @@ function Login() {
             <Stack spacing={10}>
               <Text color={"blue"}>Forgot password?</Text>
               <Button
-                bg={"accent.main"}
-                _hover={{
-                  bg: "accent.500",
-                  color: "white",
-                }}
+                size="lg"
+                bg={"green.300"}
+                _hover={{ bg: "green.500", color: "white" }}
+                isDisabled={!isComplete()}
                 onClick={handleSubmit}
               >
-                {loading ? <Spinner/> : "Log in"}
+                {loading ? <Spinner /> : "Log in"}
               </Button>
             </Stack>
           </Stack>
