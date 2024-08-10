@@ -16,12 +16,23 @@ import {
     Flex,
   } from '@chakra-ui/react'
 import { useRouter } from 'next/navigation';
+import getUserQuestions from '@/api/getUserQuestions';
+import { QuestionStatusFilter } from '@/utils/QuestionStatusFilter';
 
 export const PracticeTable = () => {
     const [questions, setQuestions] = useState([]);
+    const [filteredQuestions, setFilteredQuestions] = useState([]);
     const router = useRouter();
+    const [userId, setUserId] = useState(null);  
+    const [submissions, setSubmissions] = useState([]); 
 
     useEffect(() => {
+        setUserId(localStorage.getItem("user"));
+        const fetchSubmissions = async () => {
+            const data = await getUserQuestions(localStorage.getItem("user"));
+            const filteredData = QuestionStatusFilter(data);
+            setSubmissions(filteredData);
+        }
         const fetchQuestions = async () => {
             const { data, error } = await supabase
                 .from('Questions')
@@ -34,8 +45,31 @@ export const PracticeTable = () => {
             }
         };
 
+        fetchSubmissions();
         fetchQuestions();
-    }, []);
+    }, [userId]);
+
+    useEffect(() => {
+        if(questions.length && submissions.length) {
+            const questionStatusMap = questions.map((question) => {
+                const relevantSubmissions = submissions.filter(submission => submission.question_id === question.id);
+                if (!relevantSubmissions.length) {
+                    return {
+                        ...question,
+                        status: "Not Attempted"
+                    };
+                } else {
+                    return {
+                        ...question,
+                        status: relevantSubmissions[0].status
+                    }
+                }
+            });
+
+            setFilteredQuestions(questionStatusMap);
+        }
+    
+    }, [questions, submissions]);
 
     if(questions.length === 0) {
         return (
@@ -57,20 +91,18 @@ export const PracticeTable = () => {
                         <Thead>
                         <Tr>
                             <Th>Status</Th>
-                            <Th>Question ID</Th>
                             <Th>Title</Th>
                             <Th>Difficulty</Th>
                             <Th>Rating</Th>
                         </Tr>
                         </Thead>
                         <Tbody>
-                        {questions.map((question) => (
+                        {filteredQuestions.map((question) => (
                             <Tr key={question.id} cursor={'pointer'} onClick={()=>{
                                 router.push(`/practice/${question.id}`);
                             }}>
-                                <Td>Not Attempted</Td>
-                                <Td>{question.id}</Td>
-                                <Td>{question.name}</Td>
+                                <Td>{question.status || 'Not Attempted'}</Td>
+                                <Td>{question.id}. {question.name}</Td>
                                 <Td>LOL</Td>
                                 <Td>1000</Td>
                             </Tr>

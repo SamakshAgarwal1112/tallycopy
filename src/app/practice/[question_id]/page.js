@@ -7,11 +7,22 @@ import { Flex, Badge, Text, Box, Stack, Spinner } from "@chakra-ui/react";
 import CodeEditor from "@/components/CodeEditor";
 import TestCaseTabs from "@/components/TestCaseTabs";
 import CodeNavbar from "@/components/CodeNavbar";
+import useAuthStore from '@/store/AuthStore';
+import { useRouter } from 'next/navigation';
 
 export default function QuestionPage() {
-  const { question_id } = useParams();
-  const [question, setQuestion] = useState(null);
-  const [testcases, setTestcases] = useState(null);
+    const { question_id } = useParams();
+    const [question, setQuestion] = useState(null);
+    const [testcases, setTestcases] = useState(null);
+    const { isAuth } = useAuthStore();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!localStorage.getItem("user")){
+            router.push("/login");
+        }
+    }
+    , [isAuth]);
 
   useEffect(() => {
     if (question_id) {

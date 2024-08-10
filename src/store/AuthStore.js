@@ -23,6 +23,7 @@ const useAuthStore = create((set) => ({
     });
   },
 
+
   addAuth: () => {
     set((state) => {
       return { ...state, isAuth: true };

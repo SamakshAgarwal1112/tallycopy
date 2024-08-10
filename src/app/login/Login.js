@@ -15,7 +15,6 @@ import {
   InputRightElement,
   useToast,
   Spinner,
-  Spinner,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { supabase } from "../../utils/supabase";
@@ -54,7 +53,7 @@ function Login() {
     setLoading(true);
     const { email, password } = userData;
     try {
-      const { _, error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
@@ -71,6 +70,7 @@ function Login() {
         duration: 2500,
       });
       addAuth();
+      localStorage.setItem("user", data.user.id);
 
       setTimeout(() => {
         router.push("/practice");
