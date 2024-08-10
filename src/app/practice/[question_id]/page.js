@@ -1,64 +1,83 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/utils/supabase";
 import { useParams } from "next/navigation";
-import { Flex, Badge, Text, Box, Stack, Spinner } from "@chakra-ui/react";
+import {
+  Flex,
+  Badge,
+  Text,
+  Box,
+  Stack,
+  Spinner,
+  useToast,
+} from "@chakra-ui/react";
 import CodeEditor from "@/components/CodeEditor";
 import TestCaseTabs from "@/components/TestCaseTabs";
 import CodeNavbar from "@/components/CodeNavbar";
-import useAuthStore from '@/store/AuthStore';
-import { useRouter } from 'next/navigation';
+import useAuthStore from "@/store/AuthStore";
+import { useRouter } from "next/navigation";
+import getQuestions from "@/api/getQuestions";
+import getTestCasesOfQuestion from "@/api/getTestCasesOfQuestion";
 
 export default function QuestionPage() {
-    const { question_id } = useParams();
-    const [question, setQuestion] = useState(null);
-    const [testcases, setTestcases] = useState(null);
-    const { isAuth } = useAuthStore();
-    const router = useRouter();
+  const { question_id } = useParams();
 
-    useEffect(() => {
-        if (!localStorage.getItem("user")){
-            router.push("/login");
-        }
+  const [question, setQuestion] = useState(null); // Initialize as null
+  const [testcases, setTestcases] = useState(null); // Initialize as null
+  const [isLoading, setIsLoading] = useState(true); // Loading state
+
+  const toast = useToast();
+
+  const isAuth = useAuthStore((state) => state.isAuth);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isAuth) {
+      router.push("/login");
+
+      toast({
+        title: "You need to be logged in to view this page",
+        status: "error",
+        duration: 3000,
+        variant: "subtle",
+        isClosable: true,
+      });
     }
-    , [isAuth]);
+  }, [isAuth, router, toast]);
 
   useEffect(() => {
     if (question_id) {
-      const fetchQuestion = async () => {
-        const { data, error } = await supabase
-          .from("Questions")
-          .select("*")
-          .eq("id", question_id)
-          .single();
+      const fetchQuestionAndTestcases = async () => {
+        try {
+          const fetchedQuestion = await getQuestions(question_id);
+          console.log("Fetched question:", fetchedQuestion);
 
-        if (error) {
-          console.error("Error fetching question:", error);
-        } else {
-          setQuestion(data);
-        }
-      };
-      const fetchTestcases = async () => {
-        const { data, error } = await supabase
-          .from("Testcases")
-          .select("*")
-          .eq("question_id", question_id);
-        if (error) {
-          console.error("Error fetching testcases:", error);
-        } else {
-          setTestcases(data);
+          const fetchedTestCases = await getTestCasesOfQuestion(question_id);
+          console.log("Fetched test cases:", fetchedTestCases);
+
+          setQuestion(fetchedQuestion || {}); // Set to empty object if null
+          setTestcases(fetchedTestCases || []); // Set to empty array if null
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        } finally {
+          setIsLoading(false); // Stop loading once data is fetched
         }
       };
 
-      fetchQuestion();
-      fetchTestcases();
+      fetchQuestionAndTestcases();
     }
   }, [question_id]);
 
-  if (!question || !testcases) {
+  if (isLoading) {
     return (
-      <Flex w="100vw" h="100vh" justify={"center"} align={"center"}>
+      <Flex
+        w="100vw"
+        h="100vh"
+        justify={"center"}
+        align={"center"}
+        backgroundColor="black"
+      >
         <Text fontSize={"2xl"} as={"b"} pr={"1rem"}>
           Loading
         </Text>
@@ -90,10 +109,10 @@ export default function QuestionPage() {
         >
           <Flex align={"center"}>
             <Text fontSize={"3xl"} as={"b"}>
-              {question.id}. {question.name}
+              {question?.id}. {question?.name}
             </Text>
             <Text fontSize={"xl"} marginLeft={"auto"}>
-              {question.status || "Not Attempted"}
+              {question?.status || "Not Attempted"}
             </Text>
           </Flex>
           <Text>
@@ -104,18 +123,18 @@ export default function QuestionPage() {
               borderRadius={"10px"}
               paddingInline={"5px"}
             >
-              {question.difficulty || "Easy"}
+              {question?.difficulty || "Easy"}
             </Badge>
           </Text>
           <Box paddingTop={"1rem"} paddingBottom={"2rem"}>
-            <Text fontSize={"base"}>{question.description}</Text>
+            <Text fontSize={"base"}>{question?.description}</Text>
           </Box>
           <Box paddingBottom={"4rem"}>
             <Text fontSize={"lg"} as={"b"}>
-              Rating: {question.rating || 1000}
+              Rating: {question?.rating || 1000}
             </Text>
           </Box>
-          {testcases.map(
+          {testcases?.map(
             (testcase, index) =>
               index < 3 && (
                 <Box
@@ -157,7 +176,7 @@ export default function QuestionPage() {
           width={"50vw"}
         >
           <CodeEditor />
-          <TestCaseTabs />
+          <TestCaseTabs testcases={testcases} />
         </Stack>
       </Flex>
     </>

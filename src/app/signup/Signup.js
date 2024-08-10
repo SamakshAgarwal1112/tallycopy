@@ -29,8 +29,10 @@ function Signup() {
   const toast = useToast();
   const router = useRouter();
 
-  const { addAuth } = useAuthStore((state) => ({
+  const { addAuth, setUserName, setUserId } = useAuthStore((state) => ({
     addAuth: state.addAuth,
+    setUserName: state.setUserName,
+    setUserId: state.setUserId,
   }));
 
   function onChange(e) {
@@ -83,6 +85,9 @@ function Signup() {
       });
 
       addAuth();
+      setUserName(userName);
+      setUserId(uid);
+
       setTimeout(() => {
         router.push("/practice");
       }, 1000);
@@ -162,7 +167,7 @@ function Signup() {
                 isDisabled={!isComplete()}
                 onClick={handleSubmit}
               >
-               {loading ? <Spinner/> : "Sign up"}
+                {loading ? <Spinner /> : "Sign up"}
               </Button>
             </Stack>
             <Stack pt={6}>

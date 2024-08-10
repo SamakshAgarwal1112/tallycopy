@@ -21,6 +21,7 @@ import { supabase } from "../../utils/supabase";
 import { useRouter } from "next/navigation";
 import useAuthStore from "@/store/AuthStore";
 import Link from "next/link";
+import getUserName from "@/api/getUserName";
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -29,8 +30,10 @@ function Login() {
   const toast = useToast();
   const router = useRouter();
 
-  const { addAuth } = useAuthStore((state) => ({
+  const { addAuth, setUserName, setUserId } = useAuthStore((state) => ({
     addAuth: state.addAuth,
+    setUserName: state.setUserName,
+    setUserId: state.setUserId,
   }));
 
   function onChange(e) {
@@ -70,8 +73,12 @@ function Login() {
         isClosable: true,
         duration: 2500,
       });
+
       addAuth();
-      localStorage.setItem("user", data.user.id);
+
+      let user = await getUserName(data.user.id);
+      setUserName(user);
+      setUserId(data.user.id);
 
       setTimeout(() => {
         router.push("/practice");
@@ -147,13 +154,13 @@ function Login() {
             </Stack>
           </Stack>
           <Stack pt={6}>
-              <Text align={"center"}>
-                Dont have an account?
-                <Link href={"/signup"} style={{ color: "blue" }}>
-                  Signup
-                </Link>
-              </Text>
-            </Stack>
+            <Text align={"center"}>
+              Dont have an account?
+              <Link href={"/signup"} style={{ color: "blue" }}>
+                Signup
+              </Link>
+            </Text>
+          </Stack>
         </Box>
       </Stack>
     </Flex>

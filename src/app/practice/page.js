@@ -3,23 +3,35 @@ import { PracticeTable } from "@/components/Table";
 import useAuthStore from "@/store/AuthStore";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { useToast } from "@chakra-ui/react";
 
-const Page = () => {
-    const { isAuth } = useAuthStore();
-    const router = useRouter();
+const Practice = () => {
+  const { isAuth } = useAuthStore((state) => ({
+    isAuth: state.isAuth,
+  }));
 
-    useEffect(() => {
-        if (!localStorage.getItem("user")){
-            router.push("/login");
-        }
+  const toast = useToast();
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isAuth) {
+      router.push("/login");
+      toast({
+        title: "You need to be logged in to view this page",
+        status: "error",
+        duration: 3000,
+        variant: "subtle",
+        isClosable: true,
+      });
     }
-    , [isAuth]);
+  }, [isAuth]);
 
-    return (
-        <div className="p-4">
-            <PracticeTable />
-        </div>
-    );
-}
+  return (
+    <div className="p-4">
+      <PracticeTable />
+    </div>
+  );
+};
 
-export default Page;
+export default Practice;

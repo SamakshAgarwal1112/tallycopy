@@ -7,7 +7,6 @@ import {
   Tab,
   TabPanel,
   Text,
-  TabIndicator,
   Box,
   IconButton,
   Flex,
@@ -16,39 +15,19 @@ import {
 } from "@chakra-ui/react";
 import { PlusIcon, TrashIcon } from "@heroicons/react/outline";
 import React, { useState, useEffect } from "react";
-import getTestCasesOfQuestion from "@/api/getTestCasesOfQuestion";
 import { nanoid } from "nanoid";
-import { useParams } from "next/navigation";
 
-function TestCaseTabs() {
+function TestCaseTabs({ testcases }) {
   const [activeTab, setActiveTab] = useState(null);
   const [testCases, setTestCases] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const { question_id } = useParams();
-
   useEffect(() => {
-    setLoading(true);
-    const fetchTestCases = async () => {
-      try {
-        const fetchedTestCases = await getTestCasesOfQuestion(question_id);
-        setTestCases(fetchedTestCases);
-
-        // Set the first tab as active by default
-        if (fetchedTestCases.length > 0) {
-          setActiveTab(fetchedTestCases[0].id);
-        }
-      } catch (error) {
-        console.error("Error fetching test cases:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (question_id) {
-      fetchTestCases();
+    setTestCases(testcases); // Initialize state on mount or prop change
+    if (testcases.length > 0) {
+      setActiveTab(testcases[0].id); // Set the first test case as active
     }
-  }, [question_id]);
+  }, [testcases]);
 
   const handleTabClick = (id) => {
     setActiveTab(id);
@@ -179,12 +158,6 @@ function TestCaseTabs() {
               </Flex>
             </TabList>
           </Box>
-          {/* <TabIndicator
-          mt="-1.5px"
-          height="2px"
-          bg="blue.500"
-          borderRadius="1px"
-        /> */}
           <TabPanels>
             {testCases.map((testCase) => (
               <TabPanel key={testCase.id}>

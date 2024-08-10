@@ -4,6 +4,16 @@ const useAuthStore = create((set) => ({
   isAuth: false,
   userEmail: "",
   userName: "",
+  userId: "",
+
+  setUserId: (value) => {
+    set((state) => {
+      return {
+        ...state,
+        userId: value,
+      };
+    });
+  },
 
   setUserEmail: (value) => {
     set((state) => {
@@ -22,7 +32,6 @@ const useAuthStore = create((set) => ({
       };
     });
   },
-
 
   addAuth: () => {
     set((state) => {
