@@ -1,19 +1,13 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-
-
 body {
   background: black;
   color: white;
   height: 100%;
+  margin: 0; /* Ensure no default margin */
 }
 
 html {
   background: black;
   color: white;
   height: 100%;
+  margin: 0; /* Ensure no default margin */
 }
-
-

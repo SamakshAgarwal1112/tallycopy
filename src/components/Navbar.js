@@ -13,7 +13,7 @@ function Navbar() {
       top={0}
       zIndex="1"
       width="100%"
-      backgroundColor="#0D1418"
+      backgroundColor="black"
       color="white"
       p={4}
       justify="space-between"
