@@ -14,6 +14,7 @@ import {
   Stack,
   Spinner,
   Flex,
+  Box
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import getSubmissions from "@/app/api/getSubmissions";
@@ -30,6 +31,12 @@ export const PracticeTable = () => {
   const { userId } = useAuthStore((state) => ({
     userId: state.userId,
   }));
+
+  const colorSchemes = {
+    "Solved": "@00ff9a",
+    "Attempted": "#fcb30b",
+    "Not Attempted": "#777777",
+  }
 
   useEffect(() => {
     const fetchSubmissions = async () => {
@@ -89,19 +96,23 @@ export const PracticeTable = () => {
   }
 
   return (
-    <div className="overflow-x-auto">
+    <Box
+      overflowX={"auto"}
+      w="100%"
+      h="100%"
+    >
       <Stack spacing={4} paddingInline={"10rem"} paddingBlock={"2rem"}>
         <Text fontSize={"2xl"} as={"b"}>
           Practice Problems
         </Text>
         <TableContainer>
-          <Table variant="striped" colorScheme="black">
+          <Table>
             <Thead>
               <Tr>
-                <Th>Status</Th>
-                <Th>Title</Th>
-                <Th>Difficulty</Th>
-                <Th>Rating</Th>
+                <Th letterSpacing={'4px'}>Status</Th>
+                <Th letterSpacing={'4px'}>Title</Th>
+                <Th letterSpacing={'4px'}>Difficulty</Th>
+                <Th letterSpacing={'4px'}>Rating</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -113,7 +124,7 @@ export const PracticeTable = () => {
                     router.push(`/practice/${question.id}`);
                   }}
                 >
-                  <Td>{question.status || "Not Attempted"}</Td>
+                  <Td color={colorSchemes[question.status]}>{question.status}</Td>
                   <Td>
                     {question.id}. {question.name}
                   </Td>
@@ -125,6 +136,6 @@ export const PracticeTable = () => {
           </Table>
         </TableContainer>
       </Stack>
-    </div>
+    </Box>
   );
 };

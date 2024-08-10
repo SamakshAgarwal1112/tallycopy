@@ -89,8 +89,8 @@ main();`,
 
   return (
     <Box
-      height="50vh"
-      width="70vh"
+      h="100%"
+      w={'50vw'}
       bg="#0D1418"
       borderRadius="xl"
       overflow="hidden"

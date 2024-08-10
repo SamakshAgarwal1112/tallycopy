@@ -1,17 +1,27 @@
 "use client";
 
-import { Avatar, Flex, Text, Button } from "@chakra-ui/react";
+import { Avatar, Flex, Text, Button, Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/react";
 import { FaPlay } from "react-icons/fa";
 import { TbCloudUpload } from "react-icons/tb";
 import Link from "next/link";
 import useQuestionStore from "@/store/QuestionStore";
 import useAuthStore from "@/store/AuthStore";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 function CodeNavbar({ question_id, testcases }) {
   const code = useQuestionStore((state) => state.code);
   const userId = useAuthStore((state) => state.userId);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { removeAuth } = useAuthStore((state) => ({
+    removeAuth: state.removeAuth,
+  }));
+  const router = useRouter();
+
+  const handleLogout = () => {
+    removeAuth();
+    router.push("/login");
+  };
 
   async function submitCodeForCompilation(
     code,
@@ -75,7 +85,7 @@ function CodeNavbar({ question_id, testcases }) {
       top={0}
       zIndex="10"
       width="100%"
-      backgroundColor="black"
+      backgroundColor="#090909"
       color="white"
       p={4}
       align="center"
@@ -107,7 +117,14 @@ function CodeNavbar({ question_id, testcases }) {
       </Flex>
 
       <Flex>
-        <Avatar marginRight="1rem" name="Dan Abrahmov" />
+        <Menu>
+          <MenuButton>
+            <Avatar name="Dan Abrahmov" />
+          </MenuButton>
+          <MenuList color="white">
+            <MenuItem onClick={handleLogout}>Log Out</MenuItem>
+          </MenuList>
+        </Menu>
       </Flex>
     </Flex>
   );

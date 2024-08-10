@@ -33,11 +33,18 @@ export default function QuestionPage() {
   const code = useQuestionStore((state) => state.code);
   const router = useRouter();
 
+  const colorSchemes = {
+    "Solved": "@00ff9a",
+    "Attempted": "#fcb30b",
+    "Not Attempted": "#777777",
+  }
+
   useEffect(() => {
     if (!isAuth) {
       router.push("/login");
 
       toast({
+        position: "top",
         title: "You need to be logged in to view this page",
         status: "error",
         duration: 3000,
@@ -94,43 +101,47 @@ export default function QuestionPage() {
   }
 
   return (
-    <>
+    <Stack h={'100vh'} gap={0} overflowY={'hidden'}>
       <CodeNavbar question_id={question_id} testcases={testcases} />
-      <Flex>
+      <Flex h={'100%'}>
         <Flex
           direction={"column"}
-          height={"100vh"}
+          height={"100%"}
           paddingInline={"4rem"}
           paddingBlock={"2rem"}
           border={"1px solid black"}
           borderRadius={"5px"}
           color={"white"}
-          bgColor={"#222222"}
+          bgColor={"#111111"}
           width={"50vw"}
+          overflowY={'scroll'}
         >
-          <Flex align={"center"}>
-            <Text fontSize={"3xl"} as={"b"}>
-              {question?.id}. {question?.name}
-            </Text>
-            <Text fontSize={"xl"} marginLeft={"auto"}>
-              {question?.status || "Not Attempted"}
-            </Text>
-          </Flex>
-          <Text>
+          <Text mb={"1rem"}>
             <Badge
               colorScheme={"green"}
               variant={"subtle"}
               fontSize={"xs"}
-              borderRadius={"10px"}
-              paddingInline={"5px"}
+              borderRadius={"20px"}
+              paddingRight={"8px"}
+              paddingLeft={"10px"}
+              paddingBottom={"2px"}
+              paddingTop={"4px"}
             >
               {question?.difficulty || "Easy"}
             </Badge>
           </Text>
-          <Box paddingTop={"1rem"} paddingBottom={"2rem"}>
+          <Flex align={"center"}>
+            <Text fontSize={"3xl"} as={"b"}>
+              {question?.id}. {question?.name}
+            </Text>
+            <Text fontSize={"xl"} marginLeft={"auto"} color={"#777777"}>
+              {question?.status || "Not Attempted"}
+            </Text>
+          </Flex>
+          <Box paddingBlock={"1rem"} color={"#777777"}>
             <Text fontSize={"base"}>{question?.description}</Text>
           </Box>
-          <Box paddingBottom={"4rem"}>
+          <Box paddingBottom={"2.5rem"}>
             <Text fontSize={"lg"} as={"b"}>
               Rating: {question?.rating || 1000}
             </Text>
@@ -140,15 +151,17 @@ export default function QuestionPage() {
               index < 3 && (
                 <Box
                   key={index}
-                  padding={"1rem"}
-                  bgColor={"#323232"}
-                  borderRadius={"5px"}
+                  paddingY={"1.25rem"}
+                  paddingX={"1.5rem"}
+                  bgColor={"#1A1A1A"}
+                  borderRadius={"20px"}
                   marginBottom={"1rem"}
+                  color={"#777777"}
                 >
-                  <Text fontSize={"lg"} fontWeight={800} paddingBottom={"8px"}>
+                  <Text fontSize={"lg"} fontWeight={800} paddingBottom={"8px"} color={'white'}>
                     Example {index + 1}:
                   </Text>
-                  <Text paddingLeft={"1rem"} borderLeft={"1px solid white"}>
+                  <Text paddingLeft={"1rem"} borderLeft={"1px solid #777777"}>
                     Input:-{" "}
                     {Object.entries(testcase.input).map(([key, value]) => (
                       <Text key={key}>
@@ -156,7 +169,7 @@ export default function QuestionPage() {
                       </Text>
                     ))}
                   </Text>
-                  <Text paddingLeft={"1rem"} borderLeft={"1px solid white"}>
+                  <Text paddingLeft={"1rem"} borderLeft={"1px solid #777777"}>
                     Output: {testcase.expected_output}
                   </Text>
                 </Box>
@@ -164,22 +177,23 @@ export default function QuestionPage() {
           )}
         </Flex>
         <Stack
-          spacing={4}
-          height={"100vh"}
+          height={"100%"}
           justify={"center"}
           align={"center"}
-          paddingInline={"4rem"}
-          paddingBlock={"2rem"}
           border={"1px solid black"}
           borderRadius={"5px"}
           color={"white"}
-          bgColor={"#222222"}
+          bgColor={"#090909"}
           width={"50vw"}
         >
-          <CodeEditor />
-          <TestCaseTabs testcases={testcases} />
+          <Flex h={"50%"} w={"100%"}>
+            <CodeEditor />
+          </Flex>
+          <Flex h={"50%"} w={"100%"}>
+            <TestCaseTabs testcases={testcases} />
+          </Flex>
         </Stack>
       </Flex>
-    </>
+    </Stack>
   );
 }

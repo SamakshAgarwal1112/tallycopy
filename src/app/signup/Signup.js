@@ -76,6 +76,7 @@ function Signup() {
       }
 
       toast({
+        position: "top",
         status: "success",
         title: "Welcome back!",
         variant: "subtle",
@@ -93,6 +94,7 @@ function Signup() {
       }, 1000);
     } catch (error) {
       toast({
+        position: "top",
         status: "error",
         title: "Signup failed",
         description: error.message || "An unknown error occurred",
@@ -111,11 +113,11 @@ function Signup() {
 
   return (
     <Flex minH={"100vh"} align={"center"} justify={"center"}>
-      <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
+      <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6} bgColor={"#111111"} borderRadius={"20px"}>
         <Heading fontSize={"4xl"} textAlign={"center"}>
           Sign up
         </Heading>
-        <Box rounded={"lg"} boxShadow={"lg"} p={8}>
+        <Box rounded={"lg"} p={8}>
           <Stack spacing={4}>
             <FormControl id="userName" isRequired>
               <FormLabel>User Name</FormLabel>
@@ -173,7 +175,7 @@ function Signup() {
             <Stack pt={6}>
               <Text align={"center"}>
                 Already a user?{" "}
-                <Link href={"/login"} style={{ color: "blue" }}>
+                <Link href={"/login"} style={{ color: "#0180f1" }}>
                   Login
                 </Link>
               </Text>

@@ -3,7 +3,7 @@ import { PracticeTable } from "@/components/Table";
 import useAuthStore from "@/store/AuthStore";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { useToast } from "@chakra-ui/react";
+import { useToast, Flex } from "@chakra-ui/react";
 
 const Practice = () => {
   const { isAuth } = useAuthStore((state) => ({
@@ -18,6 +18,7 @@ const Practice = () => {
     if (!isAuth) {
       router.push("/login");
       toast({
+        position: "top",
         title: "You need to be logged in to view this page",
         status: "error",
         duration: 3000,
@@ -28,9 +29,13 @@ const Practice = () => {
   }, [isAuth]);
 
   return (
-    <div className="p-4">
+    <Flex
+        w="100%"
+        h="100%"
+        bgColor="#090909"
+    >
       <PracticeTable />
-    </div>
+    </Flex>
   );
 };
 

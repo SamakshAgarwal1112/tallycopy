@@ -12,6 +12,7 @@ import {
   Flex,
   Input,
   Spinner,
+  Stack,
 } from "@chakra-ui/react";
 import { PlusIcon, TrashIcon } from "@heroicons/react/outline";
 import React, { useState, useEffect } from "react";
@@ -94,17 +95,17 @@ function TestCaseTabs({ testcases }) {
   };
 
   return (
-    <Box
+    <Stack
       backgroundColor="#0D1418"
       color="white"
       borderRadius="xl"
       p={4}
-      w="70vh"
+      width={'100%'}
       overflow="hidden"
-      h="40vh"
+      h="100%"
     >
       {loading ? (
-        <Flex justify="center" align="center" w="70vh" height="100%">
+        <Flex justify="center" align="center" height="100%">
           <Spinner size="xl" />
         </Flex>
       ) : (
@@ -189,7 +190,7 @@ function TestCaseTabs({ testcases }) {
           </TabPanels>
         </Tabs>
       )}
-    </Box>
+    </Stack>
   );
 }
 

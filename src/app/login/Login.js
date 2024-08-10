@@ -66,6 +66,7 @@ function Login() {
         throw error;
       }
       toast({
+        position: "top",
         status: "success",
         title: "Login Successful",
         variant: "subtle",
@@ -85,6 +86,7 @@ function Login() {
       }, 1000);
     } catch (error) {
       toast({
+        position: "top",
         status: "error",
         title: "Login Failed",
         variant: "subtle",
@@ -98,11 +100,11 @@ function Login() {
 
   return (
     <Flex minH={"100vh"} align={"center"} justify={"center"}>
-      <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
+      <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6} bgColor={"#111111"} borderRadius={"20px"}>
         <Heading fontSize={"4xl"} textAlign={"center"}>
           Log in
         </Heading>
-        <Box rounded={"lg"} boxShadow={"lg"} p={8}>
+        <Box rounded={"lg"} p={8}>
           <Stack spacing={4}>
             <FormControl id="email" isRequired>
               <FormLabel>Email address</FormLabel>
@@ -141,7 +143,7 @@ function Login() {
               </InputGroup>
             </FormControl>
             <Stack spacing={10}>
-              <Text color={"blue"}>Forgot password?</Text>
+              <Text color={"#0180f1"}>Forgot password?</Text>
               <Button
                 size="lg"
                 bg={"green.300"}
@@ -155,8 +157,8 @@ function Login() {
           </Stack>
           <Stack pt={6}>
             <Text align={"center"}>
-              Dont have an account?
-              <Link href={"/signup"} style={{ color: "blue" }}>
+              Dont have an account?{" "}
+              <Link href={"/signup"} style={{ color: "#0180f1" }}>
                 Signup
               </Link>
             </Text>

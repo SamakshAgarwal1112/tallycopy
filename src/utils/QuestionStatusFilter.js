@@ -1,7 +1,7 @@
 const statusPriority = {
     "Solved": 3,
     "Attempted": 2,
-    "Not Attempted": 1,
+    "Unattempted": 1,
 };
 
 export const QuestionStatusFilter = (questions) => {
