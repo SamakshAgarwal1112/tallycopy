@@ -5,7 +5,7 @@ import { Box, Text, Heading, Flex } from "@chakra-ui/react";
 function Home() {
   return (
     <>
-      <Box backgroundColor="black" height="100vh">
+      <Box backgroundColor="#090909" height="100vh">
         <Navbar />
         <Box mt="1rem" mb="10rem">
           <Flex  gap="1rem" justify="center" align="center">

@@ -13,7 +13,7 @@ function Navbar() {
       top={0}
       zIndex="1"
       width="100%"
-      backgroundColor="black"
+      backgroundColor="#090909"
       color="white"
       p={4}
       justify="space-between"
@@ -33,7 +33,7 @@ function Navbar() {
       ) : (
         <Flex gap="1rem" marginRight="1rem">
           <Link href="/signup">
-            <Button>Sign Up</Button>
+            <Button bg="#1a1a1a">Sign Up</Button>
           </Link>
 
           <Link href="/login">
