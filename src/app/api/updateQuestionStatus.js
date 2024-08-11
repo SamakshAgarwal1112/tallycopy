@@ -1,17 +1,22 @@
 import { supabase } from "@/utils/supabase";
 
-async function updateQuestionStatus(question_id, status, userId) {
- 
-  const { data, error } = await supabase
+async function updateQuestionStatus(question_id, status, error = null, userId) {
+  console.log(question_id, status, error, userId);
+  const { data, err } = await supabase
     .from("Submissions")
-    .update({ status })
-    .eq("user_id", userId)
-    .eq("question_id", question_id);
+    .insert([
+      {
+        question_id: question_id,
+        user_id: userId,
+        status: status,
+        error: error,
+      },
+    ])
 
-  if (error) {
-    console.error("Error updating question status:", error);
+  if (err) {
+    console.error("Error inserting submission:", err);
   } else {
-    console.log("Question status updated successfully:", data);
+    console.log("Submission inserted successfully", data);
   }
 }
 
