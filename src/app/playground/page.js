@@ -13,8 +13,8 @@ function PlayGround() {
   const [outCode, setOutCode] = useState("");
   const [isSubmittingCode, setIsSubmittingCode] = useState(false);
 
-  const toast=useToast();
-  
+  const toast = useToast();
+
   const { setPlayCode, setPlayOutput, code, playCode, playOutput } =
     useQuestionStore((state) => ({
       setPlayCode: state.setPlayCode,
@@ -62,6 +62,41 @@ function PlayGround() {
       }
 
       const result = await response.json();
+
+      Object.keys(result).forEach((key) => {
+        const res = result[key];
+        if (res.status === "pass") {
+          toast({
+            title: `Test case ${key} passed`,
+            status: "success",
+            position: "top",
+            duration: 3000,
+            variant: "solid",
+            isClosable: true,
+          });
+        } else if (res.status === "fail") {
+          toast({
+            title: `Test case ${key} failed`,
+            description: `Expected: ${res.expected}, Got: ${res.output}`,
+            status: "error",
+            position: "top",
+            duration: 3000,
+            variant: "solid",
+            isClosable: true,
+          });
+        } else if (res.status === "error") {
+          toast({
+            title: `Error running test case ${key}`,
+            description: res.message || "Unknown error",
+            status: "error",
+            position: "top",
+            duration: 3000,
+            variant: "solid",
+            isClosable: true,
+          });
+        }
+      });
+  
       console.log(result);
     } catch (error) {
       toast({
