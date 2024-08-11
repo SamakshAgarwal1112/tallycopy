@@ -10,6 +10,12 @@ const QuestionDescription = ({question, testcases, status}) => {
         "Not Attempted": "#777777",
     }
 
+    const diffSchemes = {
+      "Easy": "green",
+      "Medium": "yellow",
+      "Hard": "red",
+    };
+
     return(
         <Flex
           direction={"column"}
@@ -25,7 +31,7 @@ const QuestionDescription = ({question, testcases, status}) => {
         >
           <Text mb={"1rem"}>
             <Badge
-              colorScheme={"green"}
+              colorScheme={diffSchemes[question?.difficulty]}
               variant={"subtle"}
               fontSize={"xs"}
               borderRadius={"20px"}

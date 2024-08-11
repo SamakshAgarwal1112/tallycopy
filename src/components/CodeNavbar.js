@@ -5,11 +5,11 @@ import {
   Flex,
   Text,
   Button,
-  useToast,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
+  useToast,
 } from "@chakra-ui/react";
 import { FaPlay } from "react-icons/fa";
 import { TbCloudUpload } from "react-icons/tb";
@@ -34,13 +34,12 @@ function CodeNavbar({ question_id, testcases }) {
   const [isRunningCode, setIsRunningCode] = useState(false);
 
   const router = useRouter();
+  const toast = useToast(); // Move useToast here
 
   const handleLogout = () => {
     removeAuth();
     router.push("/login");
   };
-
-  const toast = useToast();
 
   async function submitCodeForCompilation(
     code,
@@ -70,21 +69,22 @@ function CodeNavbar({ question_id, testcases }) {
           userId,
         }),
       });
-
+      const result = await response.json();
+      
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        toast({
+          position: "bottom",
+          status: "error",
+          title: "Submission Failed",
+          description:result.message,
+          variant: "subtle",
+          isClosable: true,
+          duration: 3000,
+        });
       }
 
-      const result = await response.json();
-      console.log(result);
-    } catch (error) {
-      toast({
-        title: "Error submitting code",
-        status: "error",
-        duration: 3000,
-        variant: "subtle",
-        isClosable: true,
-      });
+      console.log(result)
+
     } finally {
       if (actionType === "submit") {
         setIsSubmittingCode(false);
@@ -95,9 +95,7 @@ function CodeNavbar({ question_id, testcases }) {
   }
 
   const handleSubmit = () => {
-    const testCase = testcases.map((testcase) => ({
-      N: parseInt(testcase.input),
-    }));
+    const testCase = testcases.map((testcase) => testcase.input);
 
     const expectedOutputs = testcases.map(
       (testcase) => testcase.expected_output
@@ -131,6 +129,8 @@ function CodeNavbar({ question_id, testcases }) {
       "run"
     );
   };
+
+
 
   return (
     <Flex
@@ -175,6 +175,13 @@ function CodeNavbar({ question_id, testcases }) {
             <Avatar name="Dan Abrahmov" />
           </MenuButton>
           <MenuList color="white">
+            <MenuItem
+              onClick={() => {
+                router.push(`/profile/${userId}`);
+              }}
+            >
+              Profile
+            </MenuItem>
             <MenuItem onClick={handleLogout}>Log Out</MenuItem>
           </MenuList>
         </Menu>
