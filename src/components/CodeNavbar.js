@@ -19,7 +19,7 @@ import useAuthStore from "@/store/AuthStore";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-function CodeNavbar({ question_id, testcases, setActiveTab, setSubmissions, setIsCompiling }) {
+function CodeNavbar({ question_id, testcases, setActiveTab, setSubmissions, setIsCompiling, onCompilationComplete }) {
   const { testCases, code } = useQuestionStore((state) => ({
     testCases: state.testCases,
     code: state.code,
@@ -34,7 +34,7 @@ function CodeNavbar({ question_id, testcases, setActiveTab, setSubmissions, setI
   const [isRunningCode, setIsRunningCode] = useState(false);
 
   const router = useRouter();
-  const toast = useToast(); // Move useToast here
+  const toast = useToast();
 
   const handleLogout = () => {
     removeAuth();
@@ -55,7 +55,7 @@ function CodeNavbar({ question_id, testcases, setActiveTab, setSubmissions, setI
       setIsRunningCode(true);
     }
 
-    setActiveTab(1);
+    setActiveTab(2);
     setIsCompiling(true);
 
     try {
@@ -74,11 +74,13 @@ function CodeNavbar({ question_id, testcases, setActiveTab, setSubmissions, setI
       });
       const result = await response.json();
       console.log(result);
-      if (!response.ok) {
+      console.log(response.status)
+      if (response.status != 200) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       setSubmissions((prevSubmissions) => [result, ...prevSubmissions]);
+      onCompilationComplete(result);
     } catch (error) {
       toast({
         title: "Error submitting code",
@@ -88,12 +90,13 @@ function CodeNavbar({ question_id, testcases, setActiveTab, setSubmissions, setI
         isClosable: true,
       });
     } finally {
+      setIsCompiling(false);
       if (actionType === "submit") {
         setIsSubmittingCode(false);
       } else if (actionType === "run") {
         setIsRunningCode(false);
       }
-      setIsCompiling(false); 
+      setIsCompiling(false);
     }
   }
 
@@ -115,9 +118,7 @@ function CodeNavbar({ question_id, testcases, setActiveTab, setSubmissions, setI
   };
 
   const handleRun = () => {
-    const testCase = testCases.map((testcase) => ({
-      N: parseInt(testcase.input),
-    }));
+    const testCase = testcases.map((testcase) => testcase.input);
 
     const expectedOutputs = testCases.map(
       (testcase) => testcase.expected_output
