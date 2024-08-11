@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import {
   Flex,
@@ -43,6 +42,9 @@ export default function QuestionPage() {
   const [testcases, setTestcases] = useState(null);
   const [submissions, setSubmissions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState(0);
+  const [isCompiling, setIsCompiling] = useState(false); 
+  const [results, setResults] = useState([]);
 
   const toast = useToast();
 
@@ -111,6 +113,16 @@ export default function QuestionPage() {
     }
   }, [question_id]);
 
+  const handleCompilationStart = () => {
+    setIsCompiling(true);
+    setActiveTab(2); 
+  };
+
+  const handleCompilationResults = (result) => {
+    setResults(result.testCasesResults || []); 
+    setIsCompiling(false);
+  };
+
   if (isLoading) {
     return (
       <Flex
@@ -136,16 +148,24 @@ export default function QuestionPage() {
 
   return (
     <Stack h={'100vh'} gap={0} overflowY={'hidden'}>
-      <CodeNavbar question_id={question_id} testcases={testcases} />
+      <CodeNavbar 
+        question_id={question_id} 
+        testcases={testcases} 
+        setActiveTab={setActiveTab}
+        setSubmissions={setSubmissions}
+        setIsCompiling={handleCompilationStart}
+        onCompilationComplete={handleCompilationResults}
+      />
       <Flex h={'100%'}>
-        <Tabs w={'50vw'} h={'100%'} colorScheme="grey" bgColor={"#090909"}>
+        <Tabs index={activeTab} onChange={setActiveTab} w={'50vw'} h={'100%'} colorScheme="grey" bgColor={"#090909"}>
           <TabList>
             <Tab>Description</Tab>
             <Tab>Past Submissions</Tab>
+            <Tab>Results</Tab>
           </TabList>
           <TabPanels>
             <TabPanel p={0}>
-            <QuestionDescription question={question} testcases={testcases} status={status}/>
+              <QuestionDescription question={question} testcases={testcases} status={status}/>
             </TabPanel>
             <TabPanel>
               {
@@ -169,6 +189,43 @@ export default function QuestionPage() {
                             <Td>{submission.status}</Td>
                             <Td>{formatDate(submission.created_at)}</Td>
                             <Td>{submission.testcases_passed}</Td>
+                          </Tr>
+                        ))}
+                      </Tbody>
+                    </Table>
+                  </TableContainer>
+                )
+              }
+            </TabPanel>
+            <TabPanel> 
+              {
+                isCompiling ? (
+                  <Flex justify="center" align="center" height="100%">
+                    <Spinner size="xl" color="blue.500" />
+                    <Text ml="4">Compiling...</Text>
+                  </Flex>
+                ) : results.length === 0 ? (
+                  <Flex justify="center" align="center" height="100%">
+                    <Text>No results available</Text>
+                  </Flex>
+                ) : (
+                  <TableContainer>
+                    <Table variant="simple" colorScheme="grey">
+                      <Thead>
+                        <Tr>
+                          <Th>Test Case</Th>
+                          <Th>Expected Output</Th>
+                          <Th>Your Output</Th>
+                          <Th>Status</Th>
+                        </Tr>
+                      </Thead>
+                      <Tbody>
+                        {results.map((result, index) => (
+                          <Tr key={index}>
+                            <Td>{result.testCase}</Td>
+                            <Td>{result.expectedOutput}</Td>
+                            <Td>{result.yourOutput}</Td>
+                            <Td>{result.passed ? "Passed" : "Failed"}</Td>
                           </Tr>
                         ))}
                       </Tbody>
