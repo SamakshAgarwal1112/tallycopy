@@ -8,7 +8,7 @@ async function getSubmissions(userId, questionId = null) {
       .eq("user_id", userId);
     
     if (questionId) {
-      query = query.eq("question_id", questionId);
+      query = query.eq("question_id", questionId).order("created_at", { ascending: false });
     }
     
     const { data, error } = await query;

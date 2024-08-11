@@ -1,7 +1,7 @@
 import { Card, CardHeader, CardBody, Text } from "@chakra-ui/react";
 import { FaCode } from "react-icons/fa6";
 
-function LandingCard() {
+function LandingCard({title, description}) {
   return (
     <>
       <Card
@@ -34,11 +34,10 @@ function LandingCard() {
         </CardHeader>
         <CardBody p="0.5rem">
           <Text fontSize="xl" fontWeight="700" mb="0.75rem">
-            Code faster!
+            {title}
           </Text>
           <Text color="#B6B6B6">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex ut quo
-            possimus adipisci distinctio alias voluptatum blanditiis laudantium.
+            {description}
           </Text>
         </CardBody>
       </Card>

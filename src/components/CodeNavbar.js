@@ -5,11 +5,11 @@ import {
   Flex,
   Text,
   Button,
-  useToast,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
+  useToast,
 } from "@chakra-ui/react";
 import { FaPlay } from "react-icons/fa";
 import { TbCloudUpload } from "react-icons/tb";
@@ -19,7 +19,7 @@ import useAuthStore from "@/store/AuthStore";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-function CodeNavbar({ question_id, testcases }) {
+function CodeNavbar({ question_id, testcases, setActiveTab, setSubmissions, setIsCompiling }) {
   const { testCases, code } = useQuestionStore((state) => ({
     testCases: state.testCases,
     code: state.code,
@@ -34,13 +34,12 @@ function CodeNavbar({ question_id, testcases }) {
   const [isRunningCode, setIsRunningCode] = useState(false);
 
   const router = useRouter();
+  const toast = useToast(); // Move useToast here
 
   const handleLogout = () => {
     removeAuth();
     router.push("/login");
   };
-
-  const toast = useToast();
 
   async function submitCodeForCompilation(
     code,
@@ -56,6 +55,9 @@ function CodeNavbar({ question_id, testcases }) {
       setIsRunningCode(true);
     }
 
+    setActiveTab(1);
+    setIsCompiling(true);
+
     try {
       const response = await fetch("/api/getCompileResults", {
         method: "POST",
@@ -70,13 +72,13 @@ function CodeNavbar({ question_id, testcases }) {
           userId,
         }),
       });
-
+      const result = await response.json();
+      console.log(result);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const result = await response.json();
-      console.log(result);
+      setSubmissions((prevSubmissions) => [result, ...prevSubmissions]);
     } catch (error) {
       toast({
         title: "Error submitting code",
@@ -91,13 +93,12 @@ function CodeNavbar({ question_id, testcases }) {
       } else if (actionType === "run") {
         setIsRunningCode(false);
       }
+      setIsCompiling(false); 
     }
   }
 
   const handleSubmit = () => {
-    const testCase = testcases.map((testcase) => ({
-      N: parseInt(testcase.input),
-    }));
+    const testCase = testcases.map((testcase) => testcase.input);
 
     const expectedOutputs = testcases.map(
       (testcase) => testcase.expected_output

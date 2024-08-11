@@ -1,6 +1,7 @@
 "use client";
 import { Box, Button, Flex, Text, Avatar } from "@chakra-ui/react";
 import Link from "next/link";
+import AvatarMenu from "./AvatarMenu";
 import useAuthStore from "@/store/AuthStore";
 function Navbar() {
   const { isAuth } = useAuthStore((state) => ({
@@ -29,10 +30,7 @@ function Navbar() {
       </Flex>
 
       {isAuth ? (
-        <Avatar
-          marginRight="1rem"
-          name="Dan Abrahmov"
-        />
+        <AvatarMenu/>
       ) : (
         <Flex gap="1rem" marginRight="1rem">
           <Link href="/signup">
