@@ -82,19 +82,23 @@ export async function POST(request) {
       if (hasFailed) break;
 
       try {
-        const { time_constraint, memory_constraint } = await getConstraints(
-          question_id
-        );
+        let time_constraint=1;
+        let memory_constraint=256;
+        if (question_id) {
+          ({ time_constraint, memory_constraint } = await getConstraints(
+            question_id
+          ));
+        }
 
-        result = await runCodeWithLimits(
+        let result = await runCodeWithLimits(
           exeFilePath,
           input,
           time_constraint,
           memory_constraint
         );
 
-      const expectedOutput = expectedOutputs[parseInt(name, 10) - 1];
-      const isOutputValid = validateOutput(expectedOutput, result);
+        const expectedOutput = expectedOutputs[parseInt(name, 10) - 1];
+        const isOutputValid = validateOutput(expectedOutput, result);
 
         results[name] = isOutputValid
           ? { status: "pass" }

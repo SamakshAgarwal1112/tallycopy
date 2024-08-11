@@ -1,3 +1,4 @@
+"use client"
 import Navbar from "@/components/Navbar";
 import LandingCard from "./components/LandingCard";
 import { Box, Text, Heading, Flex } from "@chakra-ui/react";
