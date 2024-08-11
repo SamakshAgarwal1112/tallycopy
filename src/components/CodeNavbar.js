@@ -132,6 +132,8 @@ function CodeNavbar({ question_id, testcases }) {
     );
   };
 
+
+
   return (
     <Flex
       position="sticky"
@@ -175,6 +177,13 @@ function CodeNavbar({ question_id, testcases }) {
             <Avatar name="Dan Abrahmov" />
           </MenuButton>
           <MenuList color="white">
+            <MenuItem
+              onClick={() => {
+                router.push(`/profile/${userId}`);
+              }}
+            >
+              Profile
+            </MenuItem>
             <MenuItem onClick={handleLogout}>Log Out</MenuItem>
           </MenuList>
         </Menu>

@@ -34,10 +34,10 @@ export default function QuestionPage() {
   const router = useRouter();
 
   const colorSchemes = {
-    "Solved": "@00ff9a",
-    "Attempted": "#fcb30b",
-    "Not Attempted": "#777777",
-  }
+    "Easy": "green",
+    "Medium": "yellow",
+    "Hard": "red",
+  };
 
   useEffect(() => {
     if (!isAuth) {
@@ -118,7 +118,7 @@ export default function QuestionPage() {
         >
           <Text mb={"1rem"}>
             <Badge
-              colorScheme={"green"}
+              colorScheme={colorSchemes[question?.difficulty] }
               variant={"subtle"}
               fontSize={"xs"}
               borderRadius={"20px"}
@@ -127,7 +127,7 @@ export default function QuestionPage() {
               paddingBottom={"2px"}
               paddingTop={"4px"}
             >
-              {question?.difficulty || "Easy"}
+              {question?.difficulty}
             </Badge>
           </Text>
           <Flex align={"center"}>

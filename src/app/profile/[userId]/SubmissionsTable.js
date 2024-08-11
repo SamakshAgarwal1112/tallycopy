@@ -1,4 +1,5 @@
 "use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase";
@@ -23,12 +24,7 @@ import { QuestionStatusFilter } from "@/utils/QuestionStatusFilter";
 import getQuestions from "@/app/api/getQuestions";
 import useAuthStore from "@/store/AuthStore";
 
-export const PracticeTable = () => {
-  const [questions, setQuestions] = useState([]);
-  const [filteredQuestions, setFilteredQuestions] = useState([]);
-  const router = useRouter();
-  const [submissions, setSubmissions] = useState([]);
-
+const SubmissionsTable = ({ submissions }) => {
   const { userId } = useAuthStore((state) => ({
     userId: state.userId,
   }));
@@ -40,74 +36,16 @@ export const PracticeTable = () => {
   };
 
   const difficultyColorSchemes = {
-    "Easy": "green",
-    "Medium": "yellow",
-    "Hard": "red",
+    Easy: "green",
+    Medium: "yellow",
+    Hard: "red",
   };
-
-
-  useEffect(() => {
-    const fetchSubmissions = async () => {
-      const submissions = await getSubmissions(userId);
-
-      const filteredData = QuestionStatusFilter(submissions);
-      setSubmissions(filteredData);
-    };
-
-    const fetchQuestions = async () => {
-      const data = await getQuestions();
-      setQuestions(data);
-    };
-
-    fetchSubmissions();
-    fetchQuestions();
-  }, []);
-
-  useEffect(() => {
-    if (questions.length) {
-      const questionStatusMap = questions.map((question) => {
-        const relevantSubmissions = submissions.filter(
-          (submission) => submission.question_id === question.id
-        );
-        if (!relevantSubmissions.length) {
-          return {
-            ...question,
-            status: "Not Attempted",
-          };
-        } else {
-          return {
-            ...question,
-            status: relevantSubmissions[0].status,
-          };
-        }
-      });
-
-      setFilteredQuestions(questionStatusMap);
-    }
-  }, [questions, submissions]);
-
-  if (questions.length === 0) {
-    return (
-      <Flex w="100vw" h="100vh" justify={"center"} align={"center"}>
-        <Text fontSize={"2xl"} as={"b"} pr={"1rem"}>
-          Loading
-        </Text>
-        <Spinner
-          size="lg"
-          thickness="4px"
-          speed="0.65s"
-          emptyColor="gray.200"
-          color="blue.500"
-        />
-      </Flex>
-    );
-  }
 
   return (
     <Box overflowX={"auto"} w="100%" h="100%">
       <Stack spacing={4} paddingInline={"10rem"} paddingBlock={"2rem"}>
         <Text fontSize={"2xl"} as={"b"}>
-          Practice Problems
+          Submitted Problems
         </Text>
         <TableContainer>
           <Table>
@@ -116,11 +54,10 @@ export const PracticeTable = () => {
                 <Th letterSpacing={"4px"}>Status</Th>
                 <Th letterSpacing={"4px"}>Title</Th>
                 <Th letterSpacing={"4px"}>Difficulty</Th>
-                <Th letterSpacing={"4px"}>Rating</Th>
               </Tr>
             </Thead>
             <Tbody>
-              {filteredQuestions.map((question) => (
+              {submissions.map((question) => (
                 <Tr
                   key={question.id}
                   cursor={"pointer"}
@@ -149,7 +86,6 @@ export const PracticeTable = () => {
                       {question?.difficulty}
                     </Badge>
                   </Td>
-                  <Td>1000</Td>
                 </Tr>
               ))}
             </Tbody>
@@ -159,3 +95,5 @@ export const PracticeTable = () => {
     </Box>
   );
 };
+
+export default SubmissionsTable;
