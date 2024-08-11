@@ -3,6 +3,7 @@ import { promisify } from "util";
 import fs from "fs";
 import path from "path";
 import { NextResponse } from "next/server";
+import getConstraints from "../getConstraints";
 
 const execPromise = promisify(exec);
 
@@ -29,10 +30,7 @@ async function compileCode(cppFilePath, exeFilePath) {
     const { stdout, stderr } = await execPromise(
       `g++ ${cppFilePath} -o ${exeFilePath}`
     );
-    console.log("Compilation stdout:", stdout);
-    console.log("Compilation stderr:", stderr);
   } catch (error) {
-    console.error("Compilation error:", error.message);
     throw error;
   }
 }
@@ -81,8 +79,6 @@ export async function POST(request) {
   const data = await request.json();
   const { code, testCase, expectedOutputs, question_id, userId } = data;
 
-  console.log("Received code:", code); // Log the received code
-
   const tc = generateTestCasesString(testCase);
 
   const tempDir = path.join(process.cwd(), "temp");
@@ -90,7 +86,6 @@ export async function POST(request) {
   const cppFilePath = path.join(tempDir, "temp.cpp");
   const exeFilePath = path.join(tempDir, "temp.out");
 
-  console.log("Writing code to file:", code);
   fs.writeFileSync(cppFilePath, code);
 
   try {
@@ -101,7 +96,16 @@ export async function POST(request) {
     for (const [name, input] of Object.entries(tc)) {
       let result;
       try {
-        result = await runCodeWithLimits(exeFilePath, input);
+        const { time_constraint, memory_constraint } = await getConstraints(
+          question_id
+        );
+
+        result = await runCodeWithLimits(
+          exeFilePath,
+          input,
+          time_constraint,
+          memory_constraint
+        );
       } catch (error) {
         if (error.message === "TLE") {
           result = "Time Limit Exceeded";
@@ -131,7 +135,6 @@ export async function POST(request) {
 
     return NextResponse.json({ results });
   } catch (error) {
-    console.error("Error in POST handler:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   } finally {
     if (fs.existsSync(cppFilePath)) fs.unlinkSync(cppFilePath);

@@ -15,9 +15,8 @@ export default function CodeEditor() {
 
   const [currentCode, setCurrentCode] = useState(boilerplate);
 
-  const { setCode, code } = useQuestionStore((state) => ({
+  const { setCode } = useQuestionStore((state) => ({
     setCode: state.setCode,
-    code: state.code,
   }));
 
   const boilerplates = [
@@ -63,7 +62,6 @@ main();`,
   function handleChange(value) {
     setCurrentCode(value);
     setCode(value);
-    console.log(code);
   }
 
   const editorOptions = {
