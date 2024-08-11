@@ -23,6 +23,9 @@ function Navbar() {
         <Link href="/practice">
           <Text color="white">Practice</Text>
         </Link>
+        <Link href="/playground">
+          <Text color="white">PlayGround</Text>
+        </Link>
       </Flex>
 
       {isAuth ? (
