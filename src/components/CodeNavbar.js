@@ -19,7 +19,7 @@ import useAuthStore from "@/store/AuthStore";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-function CodeNavbar({ question_id, testcases }) {
+function CodeNavbar({ question_id, testcases, setActiveTab, setSubmissions, setIsCompiling }) {
   const { testCases, code } = useQuestionStore((state) => ({
     testCases: state.testCases,
     code: state.code,
@@ -55,6 +55,9 @@ function CodeNavbar({ question_id, testcases }) {
       setIsRunningCode(true);
     }
 
+    setActiveTab(1);
+    setIsCompiling(true);
+
     try {
       const response = await fetch("/api/getCompileResults", {
         method: "POST",
@@ -70,27 +73,27 @@ function CodeNavbar({ question_id, testcases }) {
         }),
       });
       const result = await response.json();
-      
+      console.log(result);
       if (!response.ok) {
-        toast({
-          position: "bottom",
-          status: "error",
-          title: "Submission Failed",
-          description:result.message,
-          variant: "subtle",
-          isClosable: true,
-          duration: 3000,
-        });
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      console.log(result)
-
+      setSubmissions((prevSubmissions) => [result, ...prevSubmissions]);
+    } catch (error) {
+      toast({
+        title: "Error submitting code",
+        status: "error",
+        duration: 3000,
+        variant: "subtle",
+        isClosable: true,
+      });
     } finally {
       if (actionType === "submit") {
         setIsSubmittingCode(false);
       } else if (actionType === "run") {
         setIsRunningCode(false);
       }
+      setIsCompiling(false); 
     }
   }
 
